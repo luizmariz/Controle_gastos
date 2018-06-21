@@ -8,6 +8,13 @@
 #include <glib.h>
  
 GtkWidget *g_lbl_receita;
+GtkWidget *g_lbl_orcamento;
+GtkWidget *g_lbl_extra;
+GtkWidget *g_lbl_valor_meta;
+GtkWidget *g_lbl_poupar_tempo;
+GtkWidget *g_lbl_objetivo;
+
+
 
 int main(int argc, char *argv[]) 
 {
@@ -25,7 +32,11 @@ int main(int argc, char *argv[])
     
     
     g_lbl_receita = GTK_WIDGET(gtk_builder_get_object(builder, "saldo_em_contas"));
-    
+    g_lbl_orcamento = GTK_WIDGET(gtk_builder_get_object(builder, "Orcamento_valor_mostruario"));
+    g_lbl_extra = GTK_WIDGET(gtk_builder_get_object(builder,"extra_display"));
+    g_lbl_valor_meta = GTK_WIDGET(gtk_builder_get_object(builder,"meta_valor"));
+    g_lbl_poupar_tempo = GTK_WIDGET(gtk_builder_get_object(builder,"valor_meta_tempo"));
+    g_lbl_objetivo = GTK_WIDGET(gtk_builder_get_object(builder,"meta_nome"));
 
     g_object_unref(builder);
 
