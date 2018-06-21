@@ -4,6 +4,7 @@
 // a funcao main designa apenas a execucao principal da interface, assim, de acordo com a documentacao
 // o funcionamento eh semelhante a um callback em que a interacao do usuario funciona como gatilho
 
+#include <stdio.h>
 #include <gtk/gtk.h>
 #include <glib.h>
  
@@ -14,13 +15,12 @@ GtkWidget *g_lbl_valor_meta;
 GtkWidget *g_lbl_poupar_tempo;
 GtkWidget *g_lbl_objetivo;
 
-
+FILE *p_main_file;
 
 int main(int argc, char *argv[]) 
 {
     GtkBuilder  *builder; 
     GtkWidget   *window; 
- 
 
     gtk_init(&argc, &argv);
  
@@ -30,6 +30,9 @@ int main(int argc, char *argv[])
     window = GTK_WIDGET(gtk_builder_get_object(builder, "window_main"));
     gtk_builder_connect_signals(builder, NULL);
     
+    //
+
+    p_main_file = fopen("data/main.txt","r+");
     
     g_lbl_receita = GTK_WIDGET(gtk_builder_get_object(builder, "saldo_em_contas"));
     g_lbl_orcamento = GTK_WIDGET(gtk_builder_get_object(builder, "Orcamento_valor_mostruario"));
