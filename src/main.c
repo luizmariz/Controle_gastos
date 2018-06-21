@@ -17,6 +17,7 @@ GtkWidget *g_lbl_objetivo;
 
 FILE *p_main_file;
 
+
 int main(int argc, char *argv[]) 
 {
     GtkBuilder  *builder; 
@@ -56,41 +57,23 @@ int main(int argc, char *argv[])
 
 void on_Nova_receita_clicked()
 {
-    static unsigned int count = 0;
-    char str_count[30] = {0};
-    count++;
-    sprintf(str_count, "R$ %d", count);
-    gtk_label_set_text(GTK_LABEL(g_lbl_receita), str_count);
+    
 }
-
 
 void on_Nova_meta_clicked()
 {
-    static unsigned int count = 0;
-    char str_count[30] = {0};
-    count++;
-    sprintf(str_count, "R$ %d", count);
-    gtk_label_set_text(GTK_LABEL(g_lbl_receita), str_count);
+   
 }
-
 
 void on_Novo_orcamento_clicked()
 {
-    static unsigned int count = 0;
-    char str_count[30] = {0};
-    count++;
-    sprintf(str_count, "R$ %d", count);
-    gtk_label_set_text(GTK_LABEL(g_lbl_receita), str_count);
+    
 }
 
 
 void on_Nova_despesa_clicked()
 {
-    static unsigned int count = 0;
-    char str_count[30] = {0};
-    count++;
-    sprintf(str_count, "R$ %d", count);
-    gtk_label_set_text(GTK_LABEL(g_lbl_receita), str_count);
+    
 }
  
 
