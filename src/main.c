@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <gtk/gtk.h>
-#include <glib.h>
  
 GtkWidget *g_lbl_receita;
 GtkWidget *g_lbl_orcamento;
@@ -14,6 +13,13 @@ GtkWidget *g_lbl_extra;
 GtkWidget *g_lbl_valor_meta;
 GtkWidget *g_lbl_poupar_tempo;
 GtkWidget *g_lbl_objetivo;
+
+GtkWidget *g_spbtn_valor1;
+GtkWidget *g_spbtn_valor2;
+
+GtkWidget  *g_etr_entrada1;
+GtkWidget  *g_etr_entrada2;
+
 
 FILE *p_main_file;
 
@@ -41,12 +47,19 @@ int main(int argc, char *argv[])
     g_lbl_valor_meta = GTK_WIDGET(gtk_builder_get_object(builder,"meta_valor"));
     g_lbl_poupar_tempo = GTK_WIDGET(gtk_builder_get_object(builder,"valor_meta_tempo"));
     g_lbl_objetivo = GTK_WIDGET(gtk_builder_get_object(builder,"meta_nome"));
+    
+    g_spbtn_valor1 = GTK_WIDGET(gtk_builder_get_object(builder,"Valor_receita_despesa"));
+    g_spbtn_valor2 = GTK_WIDGET(gtk_builder_get_object(builder,"Valor_meta_orcamento"));
+
+    g_etr_entrada1 = GTK_WIDGET(gtk_builder_get_object(builder,"descricao_receita_despesa"));
+    g_etr_entrada2 = GTK_WIDGET(gtk_builder_get_object(builder,"Descricao_meta_orcamento"));
 
     g_object_unref(builder);
 
     gtk_widget_show(window);                
     gtk_main();
- 
+
+
     return 0;
 }
  
@@ -57,25 +70,53 @@ int main(int argc, char *argv[])
 
 void on_Nova_receita_clicked()
 {
+    //double quantidade = 0; 
+    //char saida_str[100] = {0}; 
     
+    
+    //g_print("%s\n",gtk_entry_get_text(g_etr_entrada1));
+ 
+   
+    //quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor1));
+    //sprintf(saida_str,"%s", descricao_p);
+    //gtk_label_set_text(GTK_LABEL(g_lbl_receita), saida_str);
 }
-
+ 
 void on_Nova_meta_clicked()
 {
-   
+    //double quantidade = 0; 
+    //char saida_str[100] = {0}; 
+ 
+    //quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
+    //sprintf(saida_str,"%.2lf", quantidade);
+    //gtk_label_set_text(GTK_LABEL(g_lbl_receita), saida_str);
 }
 
 void on_Novo_orcamento_clicked()
 {
-    
+    //double quantidade = 0; 
+    //char saida_str[100] = {0}; 
+ 
+    //quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
+    //sprintf(saida_str,"%.2lf", quantidade);
+    //gtk_label_set_text(GTK_LABEL(g_lbl_receita), saida_str);
 }
 
 
 void on_Nova_despesa_clicked()
 {
-    
+    //double quantidade = 0; 
+    //char saida_str[100] = {0}; 
+ 
+    //quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor1));
+    //sprintf(saida_str,"%.2lf", quantidade);
+    //gtk_label_set_text(GTK_LABEL(g_lbl_receita), saida_str);
 }
  
+void on_Update_clicked()
+{
+
+}
 
 void on_window_main_destroy()
 {

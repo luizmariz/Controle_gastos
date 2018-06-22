@@ -2,16 +2,22 @@
 <!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name qwefafd -->
-      <column type="&lt; defina uma nova coluna &gt;"/>
-      <!-- column-name asdfafd -->
-      <column type="&lt; defina uma nova coluna &gt;"/>
-    </columns>
+  <object class="GtkAdjustment" id="ajuste">
+    <property name="upper">999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="ajuste1">
+    <property name="upper">999999999</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
   <object class="GtkWindow" id="window_main">
     <property name="can_focus">False</property>
+    <property name="window_position">center</property>
+    <property name="default_width">450</property>
+    <property name="default_height">465</property>
+    <signal name="destroy" handler="on_window_main_destroy" swapped="no"/>
     <child>
       <object class="GtkPaned">
         <property name="visible">True</property>
@@ -105,7 +111,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="descricao_receite_despesa">
+              <object class="GtkEntry" id="descricao_receita_despesa">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="margin_left">18</property>
@@ -144,7 +150,10 @@
                 <property name="can_focus">True</property>
                 <property name="margin_left">18</property>
                 <property name="margin_right">18</property>
-                <signal name="activate" handler="on_Valor_receita_despesa_activate" swapped="no"/>
+                <property name="adjustment">ajuste</property>
+                <property name="climb_rate">1.0000000002235174</property>
+                <property name="digits">2</property>
+                <property name="numeric">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -252,6 +261,10 @@ Saldo em contas
                   <object class="GtkSpinButton" id="Valor_meta_orcamento">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="adjustment">ajuste1</property>
+                    <property name="climb_rate">1</property>
+                    <property name="digits">2</property>
+                    <property name="numeric">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -336,6 +349,23 @@ ____________</property>
                 <property name="y">143</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkButton" id="Update">
+                <property name="label">gtk-refresh</property>
+                <property name="width_request">88</property>
+                <property name="height_request">28</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+                <signal name="clicked" handler="on_Update_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="x">72</property>
+                <property name="y">109</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="resize">True</property>
@@ -344,8 +374,13 @@ ____________</property>
         </child>
       </object>
     </child>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
+  </object>
+  <object class="GtkListStore" id="liststore1">
+    <columns>
+      <!-- column-name qwefafd -->
+      <column type="&lt; defina uma nova coluna &gt;"/>
+      <!-- column-name asdfafd -->
+      <column type="&lt; defina uma nova coluna &gt;"/>
+    </columns>
   </object>
 </interface>
