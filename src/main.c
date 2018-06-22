@@ -6,9 +6,12 @@ executadas as suas respectivas funcoes*/
 /* a funcao main designa apenas a execucao principal da interface, assim, de acordo com a documentacao
 o funcionamento eh semelhante a um callback em que a interacao do usuario funciona como gatilho*/
 
+// a biblioteca time.h sera usada para manipular o horario de sistema e setar o calendario da interface
+
 #include <stdio.h>
 #include <gtk/gtk.h>
- 
+#include <time.h>
+
 GtkWidget *g_lbl_receita;
 GtkWidget *g_lbl_orcamento;
 GtkWidget *g_lbl_extra;
@@ -26,6 +29,8 @@ GtkWidget *g_comb_contas;
 
 GtkWidget *g_bar_meta;
 GtkWidget *g_bar_orcamento;
+
+GtkCalendar *g_cal_calendario;
 
 
 FILE *p_main_file;
@@ -49,6 +54,8 @@ int main(int argc, char *argv[])
     //
 
     p_main_file = fopen("data/main.txt","r+");
+
+    //ponteiros para a GUI
     
     g_lbl_receita      = GTK_WIDGET(gtk_builder_get_object(builder,"saldo_em_contas"));
     g_lbl_orcamento    = GTK_WIDGET(gtk_builder_get_object(builder,"Orcamento_valor_mostruario"));
@@ -68,6 +75,20 @@ int main(int argc, char *argv[])
     g_bar_meta         = GTK_WIDGET(gtk_builder_get_object(builder,"meta_barra_progresso"));
     g_bar_orcamento    = GTK_WIDGET(gtk_builder_get_object(builder,"barra_progresso_orcamento"));
 
+    g_cal_calendario   = GTK_CALENDAR(gtk_builder_get_object(builder,"calendario"));
+
+    //set da data do calendario usando as funcoes da biblioteca time
+
+    time_t tempo = time(NULL); 
+    struct tm tm = *localtime(&tempo);
+
+    int dia = tm.tm_mday, mes = tm.tm_mon, ano = tm.tm_year +1900;
+
+    gtk_calendar_select_month (g_cal_calendario, mes, ano);
+    gtk_calendar_select_day (g_cal_calendario, dia);
+
+    //
+
     g_object_unref(builder);
 
     gtk_widget_show(window);                
@@ -86,19 +107,30 @@ sera colocada em uma string - sprintf(str, "", variavel) */
 // pegar texto        -- gtk_entry_get_text(GTK_ENTRY(ponteiro))) - retorna ponteiro para o texto
 // selecionar a conta -- gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT(ponteiro)) - retorna a combobox selecionada
 // controle progresso -- gtk_progress_bar_set_fraction(ponteiro, fracao double de 0.0 a 1.0) - retorna a apresentacao da barra
+// pegar data         -- gtk_calendar_get_date (ponteiro, ponteiro ano, ponteiro mes, ponteiro dia);
+
+/* exemplos  
+
+    unsigned int d,m,a;
+    unsigned int *dia, *ano, *mes;
+
+    dia = &d;
+    mes = &m;
+    ano = &a;
+    
+    gtk_calendar_get_date (g_cal_calendario, ano, mes, dia);
+    
+    printf("%s", gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT(g_comb_contas)));
+    gtk_label_set_text(GTK_LABEL(g_lbl_receita), saida_str);
+    printf("%s", gtk_entry_get_text(GTK_ENTRY(g_etr_entrada1)));
+    gtk_progress_bar_set_fraction(g_bar_meta, quantidade);
+ */
 
 void on_Nova_receita_clicked()
 {
     double quantidade = 0; 
     quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor1));
  
- // exemplos  
- 
-    // printf("%s", gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT(g_comb_contas)));
-    // gtk_label_set_text(GTK_LABEL(g_lbl_receita), saida_str);
-    // printf("%s", gtk_entry_get_text(GTK_ENTRY(g_etr_entrada1)));
-    // gtk_progress_bar_set_fraction(g_bar_meta, quantidade);
-
 }
 
 void on_Nova_despesa_clicked()
@@ -119,6 +151,10 @@ void on_Novo_orcamento_clicked()
     quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));   
 }
 
+void on_calendario_day_selected()
+{
+
+}
 
 void on_Update_clicked()
 {
