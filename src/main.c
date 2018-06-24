@@ -40,12 +40,6 @@ typedef struct{
 }entrada;
 
 typedef struct{
-    char descricao[40];
-    double valor;
-    double progresso;
-}desejo;
-
-typedef struct{
     double um;
     double dois;
     double carteira;
@@ -54,6 +48,9 @@ typedef struct{
     double status_met;
     double orcament;
     double status_orc;
+    char obj_nome[30];
+    double valor_poup;
+    int tempo;
 
 }saldo_contas;
 
@@ -81,7 +78,7 @@ void atualizar_saldo(char *conta, double valor){
 
 void update(int comando){ // 0 - ler, 1 - escrever
 
-    FILE *p_bin = fopen("main.dat","ab+");
+    FILE *p_bin = fopen("data/saldos/main.dat","ab+");
 
     if(comando == 0){
         if(fread(&saldo, sizeof(saldo_contas), 1, p_bin) == 0){
@@ -94,9 +91,15 @@ void update(int comando){ // 0 - ler, 1 - escrever
             saldo.status_met = 0;
             saldo.orcament = 0;
             saldo.status_orc = 0;
+            strcpy(saldo.obj_nome, "Inicie uma meta");
+            saldo.valor_poup = 0;
+            saldo.tempo = 0;
 
             fwrite(&saldo, sizeof(saldo_contas), 1, p_bin);
+            fclose(p_bin);
+            update(0);
         }
+        
     }
 
     if(comando == 1){
@@ -106,8 +109,63 @@ void update(int comando){ // 0 - ler, 1 - escrever
     fclose(p_bin);
 }
 
+void valor_conta_selecionada(char *conta){
+    
+    char str[100];
+
+    if (strcmp(conta, "Conta1") == 0){
+        sprintf(str,"Despesas: R$ %.2f\nConta 1: R$ %.2f", saldo.despesas,saldo.um);
+        gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
+    }
+
+    if (strcmp(conta, "Conta2") == 0){
+        sprintf(str,"Despesas: R$ %.2f\nConta 2: R$ %.2f", saldo.despesas,saldo.dois);
+        gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
+    }
+
+    if (strcmp(conta, "Carteira") == 0){
+        sprintf(str,"Despesas: R$ %.2f\nCarteira: R$ %.2f", saldo.despesas,saldo.carteira);
+        gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
+    }
+
+    if (strcmp(conta, "Meta") == 0){
+        sprintf(str,"Despesas: R$ %.2f\nMeta: R$ %.2f", saldo.despesas,saldo.met);
+        gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
+    }
+}
+
+void update_labels(){
+    char str[100];
+
+    sprintf(str,"R$ %.2f", saldo.um + saldo.dois + saldo.carteira);
+    gtk_label_set_text(GTK_LABEL(g_lbl_receita),str);
+
+    sprintf(str,"%s", saldo.obj_nome);
+    gtk_label_set_text(GTK_LABEL(g_lbl_objetivo),str);
+
+    sprintf(str,"Meta: R$ %.2f", saldo.met);
+    gtk_label_set_text(GTK_LABEL(g_lbl_valor_meta),str);
+
+    sprintf(str,"Recomendado: R$ %.2f por %d meses", saldo.valor_poup, saldo.tempo);
+    gtk_label_set_text(GTK_LABEL(g_lbl_poupar_tempo),str);
+
+    sprintf(str,"Orçamento: R$ %.2f", saldo.orcament);
+    gtk_label_set_text(GTK_LABEL(g_lbl_orcamento),str);
+
+    sprintf(str,"Despesas: R$ %.2f", saldo.despesas);
+    gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
+
+    char conta_selecionada[15];
+    strcpy(conta_selecionada , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
+    valor_conta_selecionada(conta_selecionada);
+}
+
+
+
 int main(int argc, char *argv[]){
     
+    update(0); 
+
     GtkBuilder  *builder; 
     GtkWidget   *window; 
 
@@ -126,7 +184,7 @@ int main(int argc, char *argv[]){
     g_lbl_orcamento    = GTK_WIDGET(gtk_builder_get_object(builder,"Orcamento_valor_mostruario"));
     g_lbl_extra        = GTK_WIDGET(gtk_builder_get_object(builder,"extra_display"));
     g_lbl_valor_meta   = GTK_WIDGET(gtk_builder_get_object(builder,"meta_valor"));
-    g_lbl_poupar_tempo = GTK_WIDGET(gtk_builder_get_object(builder,"valor_meta_tempo"));
+    g_lbl_poupar_tempo = GTK_WIDGET(gtk_builder_get_object(builder,"valor_tempo_meta"));
     g_lbl_objetivo     = GTK_WIDGET(gtk_builder_get_object(builder,"meta_nome"));
     
     g_spbtn_valor1     = GTK_WIDGET(gtk_builder_get_object(builder,"Valor_receita_despesa"));
@@ -153,12 +211,13 @@ int main(int argc, char *argv[]){
     gtk_calendar_select_day (g_cal_calendario, dia);
 
     //
+    update_labels();
 
     g_object_unref(builder);
 
-    gtk_widget_show(window);                
-    gtk_main();
+    gtk_widget_show(window);  
 
+    gtk_main();
 
     return 0;
 }
@@ -172,6 +231,7 @@ sera colocada em uma string - sprintf(str, "", variavel) */
 // selecionar a conta -- gtk_combo_box_text_get_active_text (GTK_COMBO_BOX_TEXT(ponteiro)) - retorna a combobox selecionada
 // controle progresso -- gtk_progress_bar_set_fraction(ponteiro, fracao double de 0.0 a 1.0) - retorna a apresentacao da barra
 // pegar data         -- gtk_calendar_get_date (ponteiro, ponteiro ano, ponteiro mes, ponteiro dia);
+
 
 void pegar_dia(char *da){
     
@@ -257,6 +317,14 @@ void on_reajuste_clicked(){
 
 }
 
+void on_Contas_move_active(){
+    char conta_selecionada[15];
+    strcpy(conta_selecionada , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
+    valor_conta_selecionada(conta_selecionada);
+}
+
 void on_window_main_destroy(){
+    
     gtk_main_quit();
+    update(1);
 }

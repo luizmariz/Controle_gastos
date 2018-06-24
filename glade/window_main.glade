@@ -86,7 +86,7 @@
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">progresso</property>
+                <property name="label" translatable="yes">Progresso</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -138,6 +138,7 @@
                   <item id="conta2" translatable="yes">Conta2</item>
                   <item id="conta_meta" translatable="yes">Meta</item>
                 </items>
+                <signal name="changed" handler="on_Contas_move_active" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
