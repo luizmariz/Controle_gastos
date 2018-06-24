@@ -15,7 +15,7 @@
   <object class="GtkWindow" id="window_main">
     <property name="can_focus">False</property>
     <property name="window_position">center</property>
-    <property name="default_width">450</property>
+    <property name="default_width">458</property>
     <property name="default_height">465</property>
     <signal name="destroy" handler="on_window_main_destroy" swapped="no"/>
     <child>
@@ -116,7 +116,8 @@
                 <property name="can_focus">True</property>
                 <property name="margin_left">18</property>
                 <property name="margin_right">18</property>
-                <property name="text" translatable="yes">Descrição</property>
+                <property name="max_length">30</property>
+                <property name="placeholder_text" translatable="yes">Descrição</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -135,7 +136,7 @@
                   <item id="carteira" translatable="yes">Carteira</item>
                   <item id="conta1" translatable="yes">Conta1</item>
                   <item id="conta2" translatable="yes">Conta2</item>
-                  <item id="conta_meta" translatable="yes">Conta Meta</item>
+                  <item id="conta_meta" translatable="yes">Meta</item>
                 </items>
               </object>
               <packing>
@@ -235,7 +236,8 @@ Saldo em contas
                   <object class="GtkEntry" id="Descricao_meta_orcamento">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
-                    <property name="text" translatable="yes">Descrição</property>
+                    <property name="max_length">30</property>
+                    <property name="placeholder_text" translatable="yes">Descrição</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -289,7 +291,7 @@ Saldo em contas
               </object>
               <packing>
                 <property name="x">13</property>
-                <property name="y">307</property>
+                <property name="y">294</property>
               </packing>
             </child>
             <child>
@@ -317,8 +319,8 @@ Saldo em contas
 ____________</property>
               </object>
               <packing>
-                <property name="x">65</property>
-                <property name="y">216</property>
+                <property name="x">67</property>
+                <property name="y">193</property>
               </packing>
             </child>
             <child>
@@ -332,8 +334,8 @@ ____________</property>
                 <property name="show_text">True</property>
               </object>
               <packing>
-                <property name="x">39</property>
-                <property name="y">181</property>
+                <property name="x">40</property>
+                <property name="y">164</property>
               </packing>
             </child>
             <child>
@@ -345,25 +347,24 @@ ____________</property>
                 <property name="label" translatable="yes">Orçamento: R$ 00,00</property>
               </object>
               <packing>
-                <property name="x">41</property>
-                <property name="y">143</property>
+                <property name="x">38</property>
+                <property name="y">125</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="Update">
-                <property name="label">gtk-refresh</property>
-                <property name="width_request">88</property>
+              <object class="GtkButton" id="reajuste">
+                <property name="label">Reajuste</property>
+                <property name="width_request">199</property>
                 <property name="height_request">28</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
                 <property name="always_show_image">True</property>
-                <signal name="clicked" handler="on_Update_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_reajuste_clicked" swapped="no"/>
               </object>
               <packing>
-                <property name="x">72</property>
-                <property name="y">109</property>
+                <property name="x">14</property>
+                <property name="y">421</property>
               </packing>
             </child>
           </object>
@@ -374,13 +375,5 @@ ____________</property>
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="liststore1">
-    <columns>
-      <!-- column-name qwefafd -->
-      <column type="&lt; defina uma nova coluna &gt;"/>
-      <!-- column-name asdfafd -->
-      <column type="&lt; defina uma nova coluna &gt;"/>
-    </columns>
   </object>
 </interface>
