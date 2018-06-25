@@ -33,6 +33,13 @@ GtkProgressBar *g_bar_orcamento;
 
 GtkCalendar *g_cal_calendario;
 
+GtkWidget *g_win_pop;
+    
+GtkTextView *g_lbl_texto;
+GtkTextBuffer *g_buffer_texto;
+
+GtkWidget *g_scroll_bar;
+
 typedef struct{
     char descricao[40];
     char conta[20];
@@ -261,6 +268,16 @@ int main(int argc, char *argv[]){
 
     g_cal_calendario   = GTK_CALENDAR(gtk_builder_get_object(builder,"calendario"));
 
+    g_win_pop = GTK_WIDGET(gtk_builder_get_object(builder,"pop_historico"));
+
+    g_lbl_texto        = GTK_TEXT_VIEW(gtk_builder_get_object(builder,"visualizador_texto"));
+    g_buffer_texto     = GTK_TEXT_BUFFER(gtk_builder_get_object(builder,"textbuffer1"));
+
+    g_scroll_bar       = GTK_WIDGET(gtk_builder_get_object(builder, "scroll_bar"));
+
+    gtk_text_view_set_buffer (g_lbl_texto, g_buffer_texto);
+
+   
     //set da data do calendario usando as funcoes da biblioteca time
 
     time_t tempo = time(NULL); 
@@ -310,24 +327,28 @@ void pegar_dia(char *da){
 
 }
 
+
 void on_Nova_receita_clicked(){
     
     entrada receita;
 
     strcpy(receita.conta , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
 
-    char nome_arquivo_txt[25] = "data/historico/";
+    char nome_arquivo_dat[25] = "data/historico/";
     char data[12];
 
     pegar_dia(data);
-    strcat(nome_arquivo_txt, data);
+    strcat(nome_arquivo_dat, data);
 
-    FILE *p_historico = fopen(nome_arquivo_txt, "a");
+    FILE *p_historico = fopen(nome_arquivo_dat, "ab");
 
     receita.valor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor1));
     strcpy(receita.descricao , gtk_entry_get_text(GTK_ENTRY(g_etr_entrada1)));
 
-    fprintf(p_historico,"\n%s: +R$%.2f %s", receita.conta, receita.valor, receita.descricao);
+    char texto[400];
+    sprintf(texto,"\n%s | %s: +R$%.2f %s", data, receita.conta, receita.valor, receita.descricao);
+    
+    fwrite(&texto,sizeof(char),400,p_historico);
 
     fclose(p_historico);
 
@@ -342,18 +363,21 @@ void on_Nova_despesa_clicked(){
 
     strcpy(despesa.conta , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
 
-    char nome_arquivo_txt[25] = "data/historico/";
+    char nome_arquivo_dat[25] = "data/historico/";
     char data[12];
 
     pegar_dia(data);
-    strcat(nome_arquivo_txt, data);
+    strcat(nome_arquivo_dat, data);
 
-    FILE *p_historico = fopen(nome_arquivo_txt, "a");
+    FILE *p_historico = fopen(nome_arquivo_dat, "ab");
 
     despesa.valor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor1));
     strcpy(despesa.descricao , gtk_entry_get_text(GTK_ENTRY(g_etr_entrada1)));
 
-    fprintf(p_historico,"\n%s: -R$%.2f %s", despesa.conta, despesa.valor, despesa.descricao);
+    char texto[400];
+    sprintf(texto,"\n%s | %s: -R$%.2f %s", data, despesa.conta, despesa.valor, despesa.descricao);
+
+    fwrite(&texto,sizeof(char),400,p_historico);
 
     fclose(p_historico);
 
@@ -386,6 +410,31 @@ void on_Novo_orcamento_clicked(){
 
 void on_calendario_day_selected(){
 
+    char conteudo[100000];
+    
+    char *p_conteudo = conteudo;
+
+    char nome_arquivo_dat[25] = "data/historico/";
+    char data[12];
+
+    pegar_dia(data);
+    strcat(nome_arquivo_dat, data);
+
+    FILE *p_historico = fopen(nome_arquivo_dat, "ab+");
+
+    while(!feof(p_historico)){
+        char texto[400];
+        fread(&texto, sizeof(char),400,p_historico);
+        strcat(p_conteudo,texto);
+    }
+    
+    fclose(p_historico);
+    
+    gtk_text_buffer_set_text (g_buffer_texto, p_conteudo, -1);
+
+    gtk_widget_show_all(g_win_pop);
+
+
 }
 
 void on_reajuste_clicked(){
@@ -405,7 +454,7 @@ void on_reajuste_clicked(){
     reajuste.valor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
     strcpy(reajuste.descricao , gtk_entry_get_text(GTK_ENTRY(g_etr_entrada2)));
 
-    fprintf(p_historico,"\n%s: Reajustado parar: R$%.2f %s", reajuste.conta, reajuste.valor, reajuste.descricao);
+    fprintf(p_historico,"\n%s: Reajustado para: R$%.2f %s", reajuste.conta, reajuste.valor, reajuste.descricao);
 
     fclose(p_historico);
 
