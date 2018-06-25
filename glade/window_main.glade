@@ -292,7 +292,7 @@ Saldo em contas
               </object>
               <packing>
                 <property name="x">13</property>
-                <property name="y">294</property>
+                <property name="y">260</property>
               </packing>
             </child>
             <child>
@@ -362,6 +362,21 @@ ____________</property>
                 <property name="receives_default">True</property>
                 <property name="always_show_image">True</property>
                 <signal name="clicked" handler="on_reajuste_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="x">14</property>
+                <property name="y">390</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="Novo_mes">
+                <property name="label" translatable="yes">Novo Mês</property>
+                <property name="width_request">199</property>
+                <property name="height_request">28</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_Novo_mes_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="x">14</property>

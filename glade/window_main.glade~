@@ -138,7 +138,7 @@
                   <item id="conta2" translatable="yes">Conta2</item>
                   <item id="conta_meta" translatable="yes">Meta</item>
                 </items>
-                <signal name="move-active" handler="on_Contas_move_active" swapped="no"/>
+                <signal name="changed" handler="on_Contas_move_active" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -292,7 +292,7 @@ Saldo em contas
               </object>
               <packing>
                 <property name="x">13</property>
-                <property name="y">294</property>
+                <property name="y">260</property>
               </packing>
             </child>
             <child>
@@ -365,6 +365,21 @@ ____________</property>
               </object>
               <packing>
                 <property name="x">14</property>
+                <property name="y">390</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="Novo_mes">
+                <property name="label" translatable="yes">Novo Mês</property>
+                <property name="width_request">150</property>
+                <property name="height_request">29</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_Novo_mes_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="x">42</property>
                 <property name="y">421</property>
               </packing>
             </child>

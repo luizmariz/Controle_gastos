@@ -28,8 +28,8 @@ GtkWidget *g_etr_entrada2;
 
 GtkWidget *g_comb_contas;
 
-GtkWidget *g_bar_meta;
-GtkWidget *g_bar_orcamento;
+GtkProgressBar *g_bar_meta;
+GtkProgressBar *g_bar_orcamento;
 
 GtkCalendar *g_cal_calendario;
 
@@ -44,53 +44,96 @@ typedef struct{
     double dois;
     double carteira;
     double met;
+    double met_atual;
     double despesas;
     double status_met;
     double orcament;
     double status_orc;
     char obj_nome[30];
     double valor_poup;
-    int tempo;
+    double tempo;
 
 }saldo_contas;
 
 saldo_contas saldo;
 
-void atualizar_saldo(char *conta, double valor){
+void atualizar_saldo(char *conta, double valor, int tipo,int reajuste){// reajuste? 1,0-nao 1,1-sim  receita? 1 despesa? 0
     
-    if (strcmp(conta, "Conta1") == 0){
-        saldo.um = saldo.um + valor;
+    if(reajuste == 0 && tipo == 1){
+        if (strcmp(conta, "Conta1") == 0){
+            saldo.um = saldo.um + valor;
+        }
+
+        if (strcmp(conta, "Conta2") == 0){
+            saldo.dois = saldo.dois + valor;
+        }
+
+        if (strcmp(conta, "Carteira") == 0){
+            saldo.carteira = saldo.carteira + valor;
+        }
+
+        if (strcmp(conta, "Meta") == 0){
+            saldo.met_atual = saldo.met_atual + valor;
+        }
     }
 
-    if (strcmp(conta, "Conta2") == 0){
-        saldo.dois = saldo.dois + valor;
+    if(reajuste == 0 && tipo == 0){
+        if (strcmp(conta, "Conta1") == 0){
+            saldo.um = saldo.um - valor;
+        }
+
+        if (strcmp(conta, "Conta2") == 0){
+            saldo.dois = saldo.dois - valor;
+        }
+
+        if (strcmp(conta, "Carteira") == 0){
+            saldo.carteira = saldo.carteira - valor;
+        }
+
+        if (strcmp(conta, "Meta") == 0){
+            saldo.met_atual = saldo.met_atual - valor;
+        }
     }
 
-    if (strcmp(conta, "Carteira") == 0){
-        saldo.carteira = saldo.carteira + valor;
-    }
+    if(reajuste == 1 && tipo == 1){
+        if (strcmp(conta, "Conta1") == 0){
+            saldo.um = valor;
+        }
 
-    if (strcmp(conta, "Meta") == 0){
-        saldo.met = saldo.met + valor;
+        if (strcmp(conta, "Conta2") == 0){
+            saldo.dois = valor;
+        }
+
+        if (strcmp(conta, "Carteira") == 0){
+            saldo.carteira = valor;
+        }
+
+        if (strcmp(conta, "Meta") == 0){
+            saldo.met_atual = valor;
+        }
     }
-    
 }// essa funcao evita a repeticao dos if ao longo do programa
 
 void update(int comando){ // 0 - ler, 1 - escrever
 
-    FILE *p_bin = fopen("data/saldos/main.dat","ab+");
+    FILE *p_bin;
 
     if(comando == 0){
+
+        p_bin = fopen("data/saldos/main.dat","ab+");
+
         if(fread(&saldo, sizeof(saldo_contas), 1, p_bin) == 0){
        
             saldo.um = 0;
             saldo.dois = 0;
             saldo.carteira = 0;
             saldo.met = 0;
+            saldo.met_atual = 0;
             saldo.despesas = 0;
             saldo.status_met = 0;
             saldo.orcament = 0;
             saldo.status_orc = 0;
+            saldo.met_atual = 0;
             strcpy(saldo.obj_nome, "Inicie uma meta");
             saldo.valor_poup = 0;
             saldo.tempo = 0;
@@ -103,10 +146,11 @@ void update(int comando){ // 0 - ler, 1 - escrever
     }
 
     if(comando == 1){
-        fwrite(&saldo, sizeof(saldo_contas), 1, p_bin);
-    }
 
-    fclose(p_bin);
+        p_bin = fopen("data/saldos/main.dat","wb");
+        fwrite(&saldo, sizeof(saldo_contas), 1, p_bin);
+        fclose(p_bin);
+    }   
 }
 
 void valor_conta_selecionada(char *conta){
@@ -129,7 +173,7 @@ void valor_conta_selecionada(char *conta){
     }
 
     if (strcmp(conta, "Meta") == 0){
-        sprintf(str,"Despesas: R$ %.2f\nMeta: R$ %.2f", saldo.despesas,saldo.met);
+        sprintf(str,"Despesas: R$ %.2f\nMeta: R$ %.2f", saldo.despesas,saldo.met_atual);
         gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
     }
 }
@@ -146,7 +190,7 @@ void update_labels(){
     sprintf(str,"Meta: R$ %.2f", saldo.met);
     gtk_label_set_text(GTK_LABEL(g_lbl_valor_meta),str);
 
-    sprintf(str,"Recomendado: R$ %.2f por %d meses", saldo.valor_poup, saldo.tempo);
+    sprintf(str,"Recomendado: R$ %.2f por %.0f meses", saldo.valor_poup, saldo.tempo);
     gtk_label_set_text(GTK_LABEL(g_lbl_poupar_tempo),str);
 
     sprintf(str,"Orçamento: R$ %.2f", saldo.orcament);
@@ -154,6 +198,23 @@ void update_labels(){
 
     sprintf(str,"Despesas: R$ %.2f", saldo.despesas);
     gtk_label_set_text(GTK_LABEL(g_lbl_extra),str);
+
+    if(saldo.met == 0){
+        saldo.status_met = 0;
+    }
+    else{
+        saldo.status_met = ((100*saldo.met_atual)/(saldo.met))/100; 
+    }
+
+    if(saldo.orcament == 0){
+        saldo.status_orc = 0;
+    }
+    else{
+        saldo.status_orc = ((100*saldo.despesas)/(saldo.orcament))/100; 
+    }
+
+    gtk_progress_bar_set_fraction(g_bar_meta, saldo.status_met);
+    gtk_progress_bar_set_fraction(g_bar_orcamento, saldo.status_orc);
 
     char conta_selecionada[15];
     strcpy(conta_selecionada , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
@@ -195,8 +256,8 @@ int main(int argc, char *argv[]){
 
     g_comb_contas      = GTK_WIDGET(gtk_builder_get_object(builder,"Contas"));
 
-    g_bar_meta         = GTK_WIDGET(gtk_builder_get_object(builder,"meta_barra_progresso"));
-    g_bar_orcamento    = GTK_WIDGET(gtk_builder_get_object(builder,"barra_progresso_orcamento"));
+    g_bar_meta         = GTK_PROGRESS_BAR(gtk_builder_get_object(builder,"meta_barra_progresso"));
+    g_bar_orcamento    = GTK_PROGRESS_BAR(gtk_builder_get_object(builder,"barra_progresso_orcamento"));
 
     g_cal_calendario   = GTK_CALENDAR(gtk_builder_get_object(builder,"calendario"));
 
@@ -211,6 +272,7 @@ int main(int argc, char *argv[]){
     gtk_calendar_select_day (g_cal_calendario, dia);
 
     //
+
     update_labels();
 
     g_object_unref(builder);
@@ -269,7 +331,8 @@ void on_Nova_receita_clicked(){
 
     fclose(p_historico);
 
-    atualizar_saldo(receita.conta, receita.valor);
+    atualizar_saldo(receita.conta, receita.valor,1,0);
+    update_labels();
     
 }
 
@@ -294,19 +357,31 @@ void on_Nova_despesa_clicked(){
 
     fclose(p_historico);
 
-    atualizar_saldo(despesa.conta, despesa.valor);
+    atualizar_saldo(despesa.conta, despesa.valor,0,0);
     saldo.despesas = saldo.despesas + despesa.valor;
+    update_labels();
 
 }
  
 void on_Nova_meta_clicked(){
-    double quantidade = 0; 
-    quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
+
+    saldo.met = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
+    strcpy(saldo.obj_nome , gtk_entry_get_text(GTK_ENTRY(g_etr_entrada2)));
+
+    saldo.tempo = (360*saldo.met)/(200000 + saldo.met);
+    
+    if(saldo.tempo <= 1){
+        saldo.tempo = 1;
+    }
+   
+    saldo.valor_poup = saldo.met/saldo.tempo;
+
+    update_labels();
 }
 
 void on_Novo_orcamento_clicked(){
-    double quantidade = 0; 
-    quantidade = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));   
+    saldo.orcament = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));  
+    update_labels();
 }
 
 void on_calendario_day_selected(){
@@ -315,16 +390,47 @@ void on_calendario_day_selected(){
 
 void on_reajuste_clicked(){
 
+    entrada reajuste;
+
+    strcpy(reajuste.conta , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
+
+    char nome_arquivo_txt[25] = "data/historico/";
+    char data[12];
+
+    pegar_dia(data);
+    strcat(nome_arquivo_txt, data);
+
+    FILE *p_historico = fopen(nome_arquivo_txt, "a");
+
+    reajuste.valor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
+    strcpy(reajuste.descricao , gtk_entry_get_text(GTK_ENTRY(g_etr_entrada2)));
+
+    fprintf(p_historico,"\n%s: Reajustado parar: R$%.2f %s", reajuste.conta, reajuste.valor, reajuste.descricao);
+
+    fclose(p_historico);
+
+    atualizar_saldo(reajuste.conta, reajuste.valor,1,1);
+    update_labels();
 }
 
 void on_Contas_move_active(){
+   
     char conta_selecionada[15];
+
     strcpy(conta_selecionada , gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(g_comb_contas)));
     valor_conta_selecionada(conta_selecionada);
 }
 
+void on_Novo_mes_clicked(){
+
+    saldo.despesas = 0;
+    saldo.orcament = 0;
+    update_labels();
+}
+
 void on_window_main_destroy(){
     
-    gtk_main_quit();
     update(1);
+    gtk_main_quit();
+
 }
