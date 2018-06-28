@@ -463,9 +463,9 @@ void on_calendario_day_selected(){
 
     FILE *p_historico = fopen(nome_arquivo_dat, "ab+");
 
-    while(!feof(p_historico)){
-        char texto[400];
-        fread(&texto, sizeof(char),400,p_historico);
+    char texto[400];
+
+    while(fread(&texto, sizeof(char),400,p_historico) != 0){ //enquanto tiver algo para ler
         strcat(p_conteudo,texto);
     }
     
@@ -499,7 +499,7 @@ void on_reajuste_clicked(){ // caso o usuario deseje, ele pode ajustar manualmen
     reajuste.valor = gtk_spin_button_get_value(GTK_SPIN_BUTTON(g_spbtn_valor2));
     strcpy(reajuste.descricao , gtk_entry_get_text(GTK_ENTRY(g_etr_entrada2)));
 
-    fprintf(p_historico,"\n%s: Reajustado para: R$%.2f %s", reajuste.conta, reajuste.valor, reajuste.descricao);
+    fprintf(p_historico,"\n%s | %s: Reajustado para: R$%.2f %s", data, reajuste.conta, reajuste.valor, reajuste.descricao);
 
     fclose(p_historico);
 
