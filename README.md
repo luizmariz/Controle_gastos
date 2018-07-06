@@ -5,5 +5,5 @@ Instruções para execução:
     
     - A princípio apenas funciona em Linux;
     - No terminal, no diretório da pasta Controle_gastos, execute o comando ./controle_gastos;
-    - Caso falhe, executar o comando "make" (são necessárias as bibliotecas gk+3 dev).
+    - Caso falhe, executar o comando "make" (são necessárias as bibliotecas gtk+3 dev).
 
