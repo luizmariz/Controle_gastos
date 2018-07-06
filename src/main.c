@@ -451,9 +451,14 @@ void on_Novo_orcamento_clicked(){
 
 void on_calendario_day_selected(){  
 
-    char conteudo[100000];
+    char conteudo[1000000];
+
+    int i;
+    for(i=0;i<1000000;i++){
+        conteudo[i] = NULL;
+    }
     
-    char *p_conteudo = conteudo;
+    char *p_conteudo = &conteudo[0];
 
     char nome_arquivo_dat[25] = "data/historico/";
     char data[12];
@@ -466,12 +471,12 @@ void on_calendario_day_selected(){
     char texto[400];
 
     while(fread(&texto, sizeof(char),400,p_historico) != 0){ //enquanto tiver algo para ler
-        strcat(p_conteudo,texto);
+        strcat(conteudo,texto);
     }
     
     fclose(p_historico);
     
-    gtk_text_buffer_set_text (g_buffer_texto, p_conteudo, -1);
+    gtk_text_buffer_set_text (g_buffer_texto, p_conteudo,-1);
 
     gtk_widget_show_all(g_win_pop);
 
